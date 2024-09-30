@@ -1,5 +1,6 @@
 package net.brights0ng.skylancer;
 
+import com.llamalad7.mixinextras.sugar.Local;
 import net.brights0ng.skylancer.registries.CommandRegistry;
 import net.fabricmc.api.ModInitializer;
 
@@ -20,5 +21,11 @@ public class Skylancer implements ModInitializer {
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
 		CommandRegistry.registerCommands();
+		LocalBlockRegistry.register();
+
+		new SkylancerClientRenderer();
+
+        LOGGER.info("Skylancer is loading...");
+
 	}
 }
