@@ -1,5 +1,6 @@
 package net.brights0ng.skylancer;
 
+import net.brights0ng.skylancer.registries.CommandRegistry;
 import net.fabricmc.api.ModInitializer;
 
 import org.slf4j.Logger;
@@ -18,7 +19,6 @@ public class Skylancer implements ModInitializer {
 		// This code runs as soon as Minecraft is in a mod-load-ready state.
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
-
-		LOGGER.info("Hello Fabric world!");
+		CommandRegistry.registerCommands();
 	}
 }

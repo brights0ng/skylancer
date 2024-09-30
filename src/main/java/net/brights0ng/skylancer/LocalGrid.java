@@ -5,11 +5,11 @@ import net.minecraft.util.math.Vec3d;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-public class SpaceGrid {
+public class LocalGrid {
     private Vec3d origin; // The offset position relative to the world grid
     private Quaternionf rotation; // Orientation of the grid
 
-    public SpaceGrid(Vec3d origin, Quaternionf rotation) {
+    public LocalGrid(Vec3d origin, Quaternionf rotation) {
         this.origin = origin;
         this.rotation = rotation;
     }
