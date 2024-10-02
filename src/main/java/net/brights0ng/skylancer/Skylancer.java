@@ -2,6 +2,7 @@ package net.brights0ng.skylancer;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import net.brights0ng.skylancer.registries.CommandRegistry;
+import net.brights0ng.skylancer.registries.PhysicsRegistry;
 import net.fabricmc.api.ModInitializer;
 
 import org.slf4j.Logger;
@@ -22,6 +23,7 @@ public class Skylancer implements ModInitializer {
 		// Proceed with mild caution.
 		CommandRegistry.registerCommands();
 		LocalBlockRegistry.register();
+		PhysicsRegistry.registerPhysicsTick();
 
 		new SkylancerClientRenderer();
 

@@ -16,7 +16,7 @@ public class LocalBlock extends Block {
 
     @Override
     public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
-        super.onBlockAdded(state, world, pos, state,false);
+        super.onPlaced(world, pos, state, placer, itemStack);
         // Call your custom rendering method here if needed
     }
 }
