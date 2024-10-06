@@ -1,4 +1,4 @@
-package net.brights0ng.skylancer;
+package net.brights0ng.skylancer.objects;
 
 public class AngularVector {
     public float yaw;

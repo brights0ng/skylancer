@@ -1,4 +1,4 @@
-package net.brights0ng.skylancer;
+package net.brights0ng.skylancer.objects;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;

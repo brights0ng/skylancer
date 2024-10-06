@@ -4,8 +4,9 @@ import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
-import net.brights0ng.skylancer.AngularVector;
-import net.brights0ng.skylancer.LocalGrid;
+import net.brights0ng.skylancer.objects.AngularVector;
+import net.brights0ng.skylancer.objects.LocalGrid;
+import net.brights0ng.skylancer.Skylancer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.block.Block;
 import net.minecraft.registry.Registries;
@@ -22,7 +23,7 @@ public class CommandRegistry {
         CommandRegistrationCallback.EVENT.register((dispatcher, dedicated, environment) -> {
              dispatcher.register(CommandManager.literal("skylancer")
                      .then(CommandManager.literal("createLocalGrid")
-                         .then(CommandManager.argument("name", StringArgumentType.string())
+                         .then(CommandManager.argument("gridID", StringArgumentType.string())
                                  .then(CommandManager.argument("originx", FloatArgumentType.floatArg())
                                          .then(CommandManager.argument("originy", FloatArgumentType.floatArg())
                                                  .then(CommandManager.argument("originz", FloatArgumentType.floatArg())
@@ -31,9 +32,7 @@ public class CommandRegistry {
                                                                          .then(CommandManager.argument("rotationz", FloatArgumentType.floatArg())
                                                                                      .executes(context -> {
                                                                                          ServerCommandSource source = context.getSource();
-                                                                                         String name = StringArgumentType.getString(context, "name");
-                                                                                         source.sendFeedback(() -> Text.literal("Creating local grid..."), false);
-
+                                                                                         String name = StringArgumentType.getString(context, "gridID");
                                                                                          Vector3f origin = new Vector3f(FloatArgumentType.getFloat(context, "originx"),
                                                                                                  FloatArgumentType.getFloat(context, "originy"),
                                                                                                  FloatArgumentType.getFloat(context, "originz"));
@@ -42,7 +41,7 @@ public class CommandRegistry {
                                                                                                  FloatArgumentType.getFloat(context, "rotationy"),
                                                                                                  FloatArgumentType.getFloat(context, "rotationz"));
 
-                                                                                         new LocalGrid(origin, rotation, name);
+                                                                                         new LocalGrid(origin, rotation);
                                                                                          source.sendFeedback(() -> Text.literal("Local Grid " + name + " created"), false);
                                                                                          return 1;
                                                                                      })
@@ -56,7 +55,7 @@ public class CommandRegistry {
                      )
                      .then(CommandManager.literal("createLocalBlock")
                              .then(CommandManager.argument("localGrid", StringArgumentType.string())
-                                     .then(CommandManager.argument("name", StringArgumentType.string())
+                                     .then(CommandManager.argument("gridID", StringArgumentType.string())
                                              .then(CommandManager.argument("blockType", StringArgumentType.string())
                                                      .then(CommandManager.argument("blockPosX", IntegerArgumentType.integer())
                                                              .then(CommandManager.argument("blockPosY", IntegerArgumentType.integer())
@@ -64,16 +63,21 @@ public class CommandRegistry {
                                                                              .executes(context -> {
                                                                                  ServerCommandSource source = context.getSource();
                                                                                  source.sendFeedback(() -> Text.literal("Local Block being constructed..."), false);
-                                                                                 LocalGrid local = LocalGrid.localGridMap.get(StringArgumentType.getString(context, "localGrid"));
+                                                                                 LocalGrid local = Skylancer.localGridMap.get(StringArgumentType.getString(context, "localGrid"));
                                                                                  Block block = Registries.BLOCK.get(Identifier.of("minecraft:" + StringArgumentType.getString(context, "blockType")));
 
-                                                                                 local.createObject(StringArgumentType.getString(context,"name"),
-                                                                                         new BlockPos(IntegerArgumentType.getInteger(context, "blockPosX"),
-                                                                                         IntegerArgumentType.getInteger(context, "blockPosY"),
-                                                                                         IntegerArgumentType.getInteger(context, "blockPosZ")), block);
-                                                                                 source.sendFeedback(() -> Text.literal("Local Block made of" + StringArgumentType.getString(context, "blockType") + " created"), false);
-
-                                                                                 return 1;
+                                                                                 try {
+                                                                                     System.out.println("Executing createObject command");
+                                                                                     local.createObject(new BlockPos(IntegerArgumentType.getInteger(context, "blockPosX"),
+                                                                                                     IntegerArgumentType.getInteger(context, "blockPosY"),
+                                                                                                     IntegerArgumentType.getInteger(context, "blockPosZ")),
+                                                                                             block);
+                                                                                     return 1; // Command result
+                                                                                 } catch (Exception e) {
+                                                                                     System.err.println("Error while executing command: " + e.getMessage());
+                                                                                     e.printStackTrace();
+                                                                                     return 0; // Command failed
+                                                                                 }
                                                                              })
                                                                      )
                                                              )
@@ -89,7 +93,7 @@ public class CommandRegistry {
                                                      .then(CommandManager.argument("y/yaw", FloatArgumentType.floatArg())
                                                              .then(CommandManager.argument("z/roll", FloatArgumentType.floatArg())
                                                                      .executes(context ->{
-                                                                         LocalGrid local =  LocalGrid.localGridMap.get(StringArgumentType.getString(context, "localGrid"));
+                                                                         LocalGrid local =  Skylancer.localGridMap.get(StringArgumentType.getString(context, "localGrid"));
                                                                          if(BoolArgumentType.getBool(context, "rotational")){
                                                                              local.gridPhysics.setAngularAcceleration(new AngularVector(FloatArgumentType.getFloat(context, "y/yaw"),
                                                                                      FloatArgumentType.getFloat(context, "x/pitch"),

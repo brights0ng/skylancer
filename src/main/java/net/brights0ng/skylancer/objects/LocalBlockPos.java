@@ -1,6 +1,4 @@
-package net.brights0ng.skylancer;
-
-import org.joml.Vector3f;
+package net.brights0ng.skylancer.objects;
 
 public class LocalBlockPos {
     private float x;
